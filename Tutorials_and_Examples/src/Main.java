@@ -1,26 +1,19 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
 public class Main {
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) {
 		
-		//int x = 0;
-		Scanner in = new Scanner(new File("src\\data.csv"));
-		
-		List<Double> names = new ArrayList<Double>();
-		in.useDelimiter(",");
-		
-		while(in.hasNext()) {
-			names.add(Double.parseDouble(in.nextLine()));	
+		int [] [] data = {
+				{4, 6, 3, 10},
+				{2, 2, 40, 1, 99, 77},
+				{0, 34, 1, 5, 0}
+		};
+ 		
+		for(int i=0; i<data.length;i++) {
+			for(int j=0;j<data[i].length;j++) {
+				System.out.print(data[i][j] + " ");
+			}
+			System.out.println();
 		}
-		for(int i=0; i<names.size();i++) {
-			System.out.println("Sample number:      " +(i+1) + ";                  Sample value: " + names.get(i));
-		}
-		in.close();
 		
 	}
 
