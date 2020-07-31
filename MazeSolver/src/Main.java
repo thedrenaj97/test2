@@ -1,98 +1,150 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 public class Main {
 	
-	static int[][] maze = {
-		{2,1,1,1},
-		{0,0,0,1},
-		{1,1,1,1}
-	};
-	//0 - wall
-	//1 - path
-	//2 - destination
-	
-	static LinkedList<Position> path = new LinkedList<Position>();
 	
 	public static void main(String[] args) {
 		
+		//0 - wall
+		//1 - path
+		//2 - destination
+				
+		// Declaring the list of mazes
+		ArrayList<Maze> mazes = new ArrayList<Maze>();
 		
-		Position p = new Position(0,3);
-		path.push(p); 						//push needed for FILO
-	
-		while(true) {
-			
-			int x_p = path.peek().x;
-			int y_p = path.peek().y;
-			
-			maze[y_p][x_p] = 0;
-			
-			//down
-			if(isValid(y_p+1,x_p)) {
-				if(maze[y_p+1][x_p] == 2) {
-					System.out.println("Moved down - You WIN");
-					return;
-				} else if(maze[y_p+1][x_p] == 1) {
-					System.out.println("Moved down");
-					path.push(new Position(y_p+1, x_p));
-					continue;
-				}
-			}
-			
-			//left
-			if(isValid(y_p, x_p-1)) {
-				if(maze[y_p][x_p-1] == 2) {
-					System.out.println("Moved left - You WIN");
-					return;
-				} else if(maze[y_p][x_p-1] == 1) {
-					System.out.println("Moved left");
-					path.push(new Position(y_p, x_p-1));
-					continue;
-				}
-			}
+		// Declaring Maze 1
+		Maze m = new Maze();
+				
+		int[][] maze = {
+			{1,1,1,1,0,1,1,1,0,1,0},
+			{0,0,1,1,1,1,0,0,0,1,0},
+			{0,0,0,1,0,1,1,0,1,1,1},
+			{1,1,1,2,0,1,1,1,0,1,0},
+			{0,0,0,1,0,0,0,0,0,1,0},
+			{0,0,0,1,1,1,1,1,1,0,1}
+		};
+		m.maze = maze;
+		m.start = new Position(4,8);
+		m.path = new LinkedList<Position>();
 		
-			//up
-			if(isValid(y_p-1, x_p)) {
-				if(maze[y_p-1][x_p] == 2) {
-					System.out.println("Moved up - You WIN");
-					return;
-				} else if(maze[y_p-1][x_p] == 1) {
-					System.out.println("Moved up");
-					path.push(new Position(y_p-1, x_p));
-					continue;
-				}
-			}
-			
-			//right
-			if(isValid(y_p, x_p+1)) {
-				if(maze[y_p][x_p+1] == 2) {
-					System.out.println("Moved right - You WIN");
-					return;
-				} else if(maze[y_p][x_p+1] == 1) {
-					System.out.println("Moved right");
-					path.push(new Position(y_p, x_p+1));
-					continue;
-				}
-			}
-
-			path.pop();
-			System.out.println("Moved Back");
-			if(path.size()<=0) {
+		// Declaring Maze 2
+		Maze n = new Maze();
+		
+		int[][] n_maze = {
+			{1,1,1,1,0,1,1,1,0,1,0},
+			{0,0,1,1,1,1,0,0,0,1,0},
+			{0,0,0,1,0,1,1,0,1,1,1},
+			{1,1,1,2,0,1,1,1,0,1,0},
+			{0,0,0,1,0,0,0,0,0,1,0},
+			{0,0,0,1,1,1,1,1,1,0,1}
+		};
+		n.maze = n_maze;
+		n.start = new Position(4,8);
+		n.path = new LinkedList<Position>();
+		
+		// Adding Mazes
+		mazes.add(m);
+		mazes.add(n);
+		
+		
+		// Looping through the list of mazes
+		int i = 0;
+		while( i<mazes.size()) {
+			if(solveMaze(mazes.get(i))) {
+				System.out.println("YOU WIN");
+			}else {
 				System.out.println("No path");
-				return;
 			}
+			System.out.println();
+			i++;
 		}
 	}
 
-	public static boolean isValid(int y, int x) {
+	// Function to solve the current maze
+	private static boolean solveMaze(Maze m) {
+	
+		Position p = m.start;				// taking position from the object
+		m.path.push(p); 					// push needed for FILO - stack
+		
+		// Moving through the maze
+		while(true) {
+			
+			// Getting current position
+			int x_p = m.path.peek().x;
+			int y_p = m.path.peek().y;
+			
+			// Changing current position to 0, so we do not go back in loops
+			m.maze[y_p][x_p] = 0;
+			
+			// Moving down, if possible
+			if(isValid(y_p+1,x_p,m)) {
+				if(m.maze[y_p+1][x_p] == 2) {
+					System.out.println("Moved down");
+					return true;						// 2 found - you win!
+				} else if(m.maze[y_p+1][x_p] == 1) {
+					System.out.println("Moved down");
+					m.path.push(new Position(y_p+1, x_p));
+					continue;							// 1 found - keep moving
+				}
+			}
+			
+			// Moving left, if possible
+			if(isValid(y_p, x_p-1,m)) {
+				if(m.maze[y_p][x_p-1] == 2) {
+					System.out.println("Moved left");
+					return true;						// 2 found - you win!
+				} else if(m.maze[y_p][x_p-1] == 1) {
+					System.out.println("Moved left");
+					m.path.push(new Position(y_p, x_p-1));
+					continue;							// 1 found - keep moving
+				}
+			}
+		
+			// Moving up, if possible
+			if(isValid(y_p-1, x_p,m)) {
+				if(m.maze[y_p-1][x_p] == 2) {
+					System.out.println("Moved up");
+					return true;						// 2 found - you win!
+				} else if(m.maze[y_p-1][x_p] == 1) {
+					System.out.println("Moved up");
+					m.path.push(new Position(y_p-1, x_p));
+					continue;							// 1 found - keep moving
+				}	
+			}
+			
+			// Moving right, if possible
+			if(isValid(y_p, x_p+1,m)) {
+				if(m.maze[y_p][x_p+1] == 2) {
+					System.out.println("Moved right");
+					return true;						// 2 found - you win!
+				} else if(m.maze[y_p][x_p+1] == 1) {
+					System.out.println("Moved right");
+					m.path.push(new Position(y_p, x_p+1));
+					continue;							// 1 found - keep moving
+				}
+			}
+
+			// If we cannot move anywhere, we are stuck, so go back
+			m.path.pop();						// removing current position from the stack
+			System.out.println("Moved Back");	// declaring back move
+			if(m.path.size()<=0) {
+				return false;					// if there are no more places to backtrack
+			}									// there is no path to find
+		}		
+	}
+
+
+	// Function to check for out of bounds
+	public static boolean isValid(int y, int x, Maze m) {
 		if(y < 0 || 	
-			y >= maze.length || 
+			y >= m.maze.length || 
 			x < 0 || 
-			x >= maze[y].length
+			x >= m.maze[y].length
 		 ) {
-			return false;
+			return false;	// out of bounds
 		}
-		return true;
+		return true;		// not out of bounds
 	}
 	
 }
