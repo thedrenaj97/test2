@@ -1,52 +1,21 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 public class Main {
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		
 		//0 - wall
 		//1 - path
 		//2 - destination
 				
 		// Declaring the list of mazes
-		ArrayList<Maze> mazes = new ArrayList<Maze>();
-		
-		// Declaring Maze 1
-		Maze m = new Maze();
-				
-		int[][] maze = {
-			{1,1,1,1,0,1,1,1,0,1,0},
-			{0,0,1,1,1,1,0,0,0,1,0},
-			{0,0,0,1,0,1,1,0,1,1,1},
-			{1,1,1,2,0,1,1,1,0,1,0},
-			{0,0,0,1,0,0,0,0,0,1,0},
-			{0,0,0,1,1,1,1,1,1,0,1}
-		};
-		m.maze = maze;
-		m.start = new Position(4,8);
-		m.path = new LinkedList<Position>();
-		
-		// Declaring Maze 2
-		Maze n = new Maze();
-		
-		int[][] n_maze = {
-			{1,1,1,1,0,1,1,1,0,1,0},
-			{0,0,1,1,1,1,0,0,0,1,0},
-			{0,0,0,1,0,1,1,0,1,1,1},
-			{1,1,1,2,0,1,1,1,0,1,0},
-			{0,0,0,1,0,0,0,0,0,1,0},
-			{0,0,0,1,1,1,1,1,1,0,1}
-		};
-		n.maze = n_maze;
-		n.start = new Position(4,8);
-		n.path = new LinkedList<Position>();
-		
-		// Adding Mazes
-		mazes.add(m);
-		mazes.add(n);
-		
+		ArrayList<Maze> mazes = readMazes(); 
 		
 		// Looping through the list of mazes
 		int i = 0;
@@ -59,6 +28,39 @@ public class Main {
 			System.out.println();
 			i++;
 		}
+	}
+
+	
+	
+	
+	private static ArrayList<Maze> readMazes() throws FileNotFoundException {
+		
+		ArrayList<Maze> mazes = new ArrayList<Maze>();
+		
+		Scanner in = new Scanner(new File ("src/mazes.txt"));
+		
+		while(in.hasNext()) {
+			
+			Maze m = new Maze();
+			int rows = Integer.parseInt(in.nextLine());
+			
+			m.maze = new int[rows][];
+			
+			
+			// loop
+			for(int i=0; i<rows; i++) {
+				String line = in.nextLine();
+				m.maze[i] = Arrays.stream(line.split(", ")).mapToInt(Integer::parseInt).toArray();
+			}
+			
+			m.start = new Position(Integer.parseInt(in.nextLine()), Integer.parseInt(in.nextLine()));
+			in.nextLine();
+			
+			mazes.add(m);
+		}
+			
+		in.close();
+		return mazes;
 	}
 
 	// Function to solve the current maze
